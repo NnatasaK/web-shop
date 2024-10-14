@@ -1,0 +1,19 @@
+{
+    "env": {
+      "node": true,
+      "es2021": true,
+      "es6": true
+    },
+    "globals": {
+      "process": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      // You can add custom rules here if needed
+    }
+  }
+  
