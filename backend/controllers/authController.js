@@ -4,14 +4,16 @@ import User from '../models/userModel.js';
 
 // Signup route
 export const signup = async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, password, role = 'user' } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
     
     // Save the user to the database
     User.createUser(username, hashedPassword, role, (err) => {
       if (err) {
+        console.error('Error inserting user:', err.message);
         return res.status(400).json({ message: 'User already exists' });
       }
       res.status(201).json({

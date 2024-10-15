@@ -31,12 +31,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Register function (Signup)
-  const register = async (username: string, password: string) => {
+  const register = async (username: string, password: string, role: string = 'user') => {
     setLoading(true);
     try {
       const response = await axios.post(`${API_BASE_URL}/api/signup`, {
         username,
         password,
+        role
       });
       console.log('User registered:', response.data);  // Log response for debugging
       setLoading(false);

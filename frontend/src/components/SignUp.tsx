@@ -10,8 +10,8 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register(username, password);  // Call the register function from context
-    navigate('/login');  // Redirect to login page after successful registration
+    await register(username, password);  
+    navigate('/login');  
   };
 
   return (
