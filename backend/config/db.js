@@ -1,8 +1,18 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Resolve __dirname (as you're using ES6 modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define the database path (absolute path)
+const dbPath = path.resolve(__dirname, 'database.sqlite');
+
+// Log the path to the database for debugging purposes
+console.log('Database Path:', dbPath);
 
 // Initialize SQLite Database
-const dbPath = path.resolve(path.dirname(''), 'database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message);
