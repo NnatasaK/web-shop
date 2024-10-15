@@ -14,7 +14,13 @@ export const signup = async (req, res) => {
       if (err) {
         return res.status(400).json({ message: 'User already exists' });
       }
-      res.status(201).json({ message: 'User created' });
+      res.status(201).json({
+        message: 'User created',
+        user: {
+          username,
+          role
+        }
+      });
     });
     
   } catch (error) {
@@ -51,7 +57,7 @@ export const login = (req, res) => {
     const token = jwt.sign(
       { username: user.username, role: user.role },  // Payload
       process.env.JWT_SECRET,                        // Secret key
-      { expiresIn: '1h' }                            // Token expiration (optional)
+      { expiresIn: '1h' }                            // Token expiration 
     );
 
     res.json({ token });
