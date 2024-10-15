@@ -7,7 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define the absolute path for your database file (pick one directory only)
-const dbPath = path.resolve(__dirname, '../config/database.sqlite'); // Ensure you only use one path consistently
+const dbPath = process.env.NODE_ENV === 'production' ? path.resolve('/tmp', 'database.sqlite') : path.resolve(__dirname, 'config', 'database.sqlite');
+
 
 // Log the path to the database for debugging purposes
 console.log('Database Path:', dbPath);
