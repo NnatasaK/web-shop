@@ -7,29 +7,42 @@ export const signup = async (req, res) => {
   const { username, password, role = 'user' } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
-    
-    // Save the user to the database
-    User.createUser(username, hashedPassword, role, (err) => {
+    // Check if the user already exists
+    User.findUserByUsername(username, async (err, existingUser) => {
       if (err) {
-        console.error('Error inserting user:', err.message);
+        console.error('Error checking if user exists:', err.message);
+        return res.status(500).json({ message: 'Server error' });
+      }
+
+      // If user exists, return 400
+      if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
       }
-      res.status(201).json({
-        message: 'User created',
-        user: {
-          username,
-          role
+
+      // If user doesn't exist, proceed with creation
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log('Hashed Password:', hashedPassword);
+
+      // Save the new user to the database
+      User.createUser(username, hashedPassword, role, (err) => {
+        if (err) {
+          console.error('Error inserting user:', err.message);
+          return res.status(500).json({ message: 'Error creating user' });
         }
+        res.status(201).json({
+          message: 'User created',
+          user: {
+            username,
+            role
+          }
+        });
       });
     });
-    
+
   } catch (error) {
     res.status(500).json({ message: 'Error signing up', error: error.message });
   }
 };
-
 // Login route
 export const login = (req, res) => {
   const { username, password } = req.body;
