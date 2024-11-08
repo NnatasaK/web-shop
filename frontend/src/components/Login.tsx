@@ -1,29 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../useAuth';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../utils/useAuth";
+import axios from "axios";
 
 const LoginPage: React.FC = () => {
-  const { login, loading } = useAuth();
-  const [username, setUsername] = useState('');  // Changed to username
-  const [password, setPassword] = useState('');
+  const { login, loading, user } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(username, password);  // Login with username and password
-    navigate('/');  // Redirect to HomePage after login
+    setError(""); // Clear previous error message
+    try {
+      await login(username, password);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 429) {
+          setError("Too many failed login attempts. Please try again later.");
+        } else {
+          setError("Login failed. Please check your credentials.");
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
-  return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4">Welcome to WebShop</h2>
-        <p className="text-gray-500 mb-8">Keep your data safe</p>
+  useEffect(() => {
+    if (user) {
+      navigate(user.role === "admin" ? "/admin" : "/");
+    }
+  }, [user, navigate]);
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 via-blue-700 to-blue-400">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Welcome to WebShop
+        </h2>
+        <p className="text-center text-gray-500 mb-8">Secure Login</p>
+
+        {/* Display Error Message */}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <input
-              type="text"  
+              type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -31,7 +56,7 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          <div className="mb-4">
+          <div>
             <input
               type="password"
               placeholder="Password"
@@ -44,17 +69,17 @@ const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            className="w-full py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <div className="text-center mt-4">
-          <p className="text-gray-500">
-            Don’t have an account?{' '}
+        <div className="text-center mt-6">
+          <p className="text-gray-600">
+            Don’t have an account?{" "}
             <span
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate("/signup")}
               className="text-yellow-500 cursor-pointer hover:underline"
             >
               Register

@@ -1,34 +1,19 @@
-import React from 'react';
-import { useAuth } from '../useAuth';
+import ProductList from "./ProductsList";
+import { useAuth } from "../utils/useAuth";
+import LogoutButton from "./Logout";
+import useInactivityTimeout from "../utils/inactivityTimeout";
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
+  useInactivityTimeout();
 
   return (
-    <div className="home-page">
-      <h1>Welcome to the Web Shop, {user?.username}!</h1>
-
-      {/* Product listing visible to both users and admins */}
-      <div className="products">
-        <h2>Available Products</h2>
-        <div className="product-list">
-          {/* Render products here */}
-          <div className="product-item">
-            <p>Product Name</p>
-            <p>$10.00</p>
-          </div>
-          {/* Add more products as needed */}
-        </div>
-      </div>
-
-      {/* Admin-specific product management tools */}
-      {user?.role === 'admin' && (
-        <div className="admin-tools">
-          <h2>Admin Tools</h2>
-          <button>Add New Product</button>
-          {/* Additional admin options like editing or removing products */}
-        </div>
-      )}
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">
+        Welcome to the Web Shop, {user?.username}!
+      </h1>
+      <ProductList />
+      {user && <LogoutButton />}
     </div>
   );
 };
